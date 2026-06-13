@@ -1,0 +1,1 @@
+- [R3 Composer workflow startup](r3-composer-workflow.md) — artifact-managed workflow fails restart_workflow; use standalone configureWorkflow without waitForPort instead.

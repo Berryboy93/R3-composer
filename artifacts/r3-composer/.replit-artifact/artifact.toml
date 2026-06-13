@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "R3 Intelligent Composer"
+version = "1.0.0"
+id = "artifacts/r3-composer"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 5173
+
+[services.development]
+run = "PORT=5173 BASE_PATH=/ pnpm --filter @workspace/r3-composer run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/r3-composer", "run", "build" ]
+publicDir = "artifacts/r3-composer/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "5173"
+BASE_PATH = "/"

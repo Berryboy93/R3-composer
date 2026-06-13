@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: composer
+    description: Composer session and pattern operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /composer/session:
+    get:
+      operationId: getComposerSession
+      tags: [composer]
+      summary: Get current session
+      description: Returns the current composer session state (creates default if none exists)
+      responses:
+        "200":
+          description: Session loaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComposerSession"
+    put:
+      operationId: updateComposerSession
+      tags: [composer]
+      summary: Update session state
+      description: Upserts the composer session (pad grid, BPM, quantize)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComposerSessionInput"
+      responses:
+        "200":
+          description: Session updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComposerSession"
+
+  /composer/patterns:
+    get:
+      operationId: listComposerPatterns
+      tags: [composer]
+      summary: List saved patterns
+      responses:
+        "200":
+          description: List of patterns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ComposerPattern"
+    post:
+      operationId: createComposerPattern
+      tags: [composer]
+      summary: Save current state as a named pattern
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComposerPatternInput"
+      responses:
+        "201":
+          description: Pattern created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComposerPattern"
+
+  /composer/patterns/{id}:
+    delete:
+      operationId: deleteComposerPattern
+      tags: [composer]
+      summary: Delete a pattern
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /composer/patterns/{id}/activate:
+    post:
+      operationId: activateComposerPattern
+      tags: [composer]
+      summary: Load a pattern into the active session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Session updated with pattern
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComposerSession"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +135,84 @@ components:
       required:
         - status
 
+    ComposerSession:
+      type: object
+      required: [id, bpm, quantize, activePads, bluePads, updatedAt]
+      properties:
+        id:
+          type: integer
+        bpm:
+          type: integer
+        quantize:
+          type: string
+        activePads:
+          type: array
+          items:
+            type: integer
+        bluePads:
+          type: array
+          items:
+            type: integer
+        updatedAt:
+          type: string
+
+    ComposerSessionInput:
+      type: object
+      properties:
+        bpm:
+          type: integer
+        quantize:
+          type: string
+        activePads:
+          type: array
+          items:
+            type: integer
+        bluePads:
+          type: array
+          items:
+            type: integer
+
+    ComposerPattern:
+      type: object
+      required: [id, name, bpm, quantize, activePads, bluePads, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        bpm:
+          type: integer
+        quantize:
+          type: string
+        activePads:
+          type: array
+          items:
+            type: integer
+        bluePads:
+          type: array
+          items:
+            type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    ComposerPatternInput:
+      type: object
+      required: [name, bpm, quantize, activePads, bluePads]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        bpm:
+          type: integer
+        quantize:
+          type: string
+        activePads:
+          type: array
+          items:
+            type: integer
+        bluePads:
+          type: array
+          items:
+            type: integer
