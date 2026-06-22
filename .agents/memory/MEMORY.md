@@ -1,1 +1,3 @@
 - [R3 Composer workflow startup](r3-composer-workflow.md) — artifact-managed workflow fails restart_workflow; use standalone configureWorkflow without waitForPort instead.
+- [Orval split-mode duplicate exports](orval-zod-duplicate-exports.md) — removing `schemas` from orval zod config prevents TypeScript duplicate export errors.
+- [API routes double-prefix pitfall](api-routes-prefix.md) — Express app mounts router at /api; new route files must NOT add /api prefix themselves or routes become /api/api/...

@@ -6,7 +6,6 @@ import {
   GenerateCompositionBody,
   RegenerateCompositionBody,
   GenerateCompositionResponse,
-  Composition,
 } from "@workspace/api-zod";
 import { logger } from "../lib/logger";
 
@@ -325,7 +324,7 @@ router.get("/composer/compositions/:id", async (req, res): Promise<void> => {
     res.status(404).json({ error: { code: "NOT_FOUND", message: "Composition not found" } });
     return;
   }
-  res.json(Composition.parse(serializeComposition(row)));
+  res.json(serializeComposition(row));
 });
 
 export default router;
