@@ -12,6 +12,14 @@ tags:
     description: Health operations
   - name: composer
     description: Composer session and pattern operations
+  - name: generate
+    description: AI composition generation
+  - name: projects
+    description: Project management
+  - name: exports
+    description: MIDI export
+  - name: copilot
+    description: Producer Copilot AI analysis
 paths:
   /healthz:
     get:
@@ -125,6 +133,302 @@ paths:
               schema:
                 $ref: "#/components/schemas/ComposerSession"
 
+  /composer/generate:
+    post:
+      operationId: generateComposition
+      tags: [generate]
+      summary: Generate a full AI composition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateCompositionBody"
+      responses:
+        "200":
+          description: Composition generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateCompositionResponse"
+        "503":
+          description: AI service unavailable (API key not configured)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /composer/regenerate:
+    post:
+      operationId: regenerateComposition
+      tags: [generate]
+      summary: Regenerate a composition with optional component locks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegenerateCompositionBody"
+      responses:
+        "200":
+          description: Composition regenerated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateCompositionResponse"
+        "404":
+          description: Composition not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /composer/compositions/{id}:
+    get:
+      operationId: getComposition
+      tags: [generate]
+      summary: Get a composition by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Composition found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Composition"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List all projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a new project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get a project with its latest composition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project loaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectWithComposition"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update project metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectBody"
+      responses:
+        "200":
+          description: Project updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Soft-delete a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteProjectResponse"
+
+  /projects/{id}/save:
+    post:
+      operationId: saveProjectVersion
+      tags: [projects]
+      summary: Save current composition as a version snapshot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveProjectVersionBody"
+      responses:
+        "200":
+          description: Version saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaveProjectVersionResponse"
+
+  /projects/{id}/versions:
+    get:
+      operationId: listProjectVersions
+      tags: [projects]
+      summary: List all version snapshots for a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of versions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectVersion"
+
+  /exports/midi:
+    post:
+      operationId: exportMidi
+      tags: [exports]
+      summary: Export composition as MIDI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportMidiBody"
+      responses:
+        "200":
+          description: MIDI export ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportMidiResponse"
+
+  /exports:
+    get:
+      operationId: listExports
+      tags: [exports]
+      summary: List recent exports
+      responses:
+        "200":
+          description: List of exports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExportRecord"
+
+  /copilot/analyze:
+    post:
+      operationId: analyzeComposition
+      tags: [copilot]
+      summary: AI analysis of a composition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeCompositionBody"
+      responses:
+        "200":
+          description: Analysis complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CopilotAnalysisResponse"
+        "503":
+          description: AI service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /copilot/suggestions:
+    post:
+      operationId: getSuggestions
+      tags: [copilot]
+      summary: Get AI suggestions based on a follow-up question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetSuggestionsBody"
+      responses:
+        "200":
+          description: Suggestions returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetSuggestionsResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -216,3 +520,430 @@ components:
           type: array
           items:
             type: integer
+
+    Chord:
+      type: object
+      required: [position, symbol, romanNumeral, duration, midiNotes]
+      properties:
+        position:
+          type: integer
+        symbol:
+          type: string
+        romanNumeral:
+          type: string
+        duration:
+          type: number
+        midiNotes:
+          type: array
+          items:
+            type: integer
+
+    HarmonyResult:
+      type: object
+      required: [key, bpm, timeSignature, chords]
+      properties:
+        key:
+          type: string
+        bpm:
+          type: integer
+        timeSignature:
+          type: string
+        chords:
+          type: array
+          items:
+            $ref: "#/components/schemas/Chord"
+
+    MelodyNote:
+      type: object
+      required: [pitch, startBeat, duration, velocity]
+      properties:
+        pitch:
+          type: integer
+        startBeat:
+          type: number
+        duration:
+          type: number
+        velocity:
+          type: integer
+
+    MelodyResult:
+      type: object
+      required: [type, phraseCount, notes]
+      properties:
+        type:
+          type: string
+        phraseCount:
+          type: integer
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/MelodyNote"
+
+    DrumTracks:
+      type: object
+      required: [kick, snare, hihat]
+      properties:
+        kick:
+          type: array
+          items:
+            type: boolean
+        snare:
+          type: array
+          items:
+            type: boolean
+        hihat:
+          type: array
+          items:
+            type: boolean
+        openHH:
+          type: array
+          items:
+            type: boolean
+        clap:
+          type: array
+          items:
+            type: boolean
+
+    DrumPattern:
+      type: object
+      required: [bpm, bars, steps, tracks]
+      properties:
+        bpm:
+          type: integer
+        bars:
+          type: integer
+        steps:
+          type: integer
+        swing:
+          type: number
+        tracks:
+          $ref: "#/components/schemas/DrumTracks"
+
+    Composition:
+      type: object
+      required: [id, key, bpm, timeSignature, genre, mood, prompt, harmony, melodies, drums, styleMatch, lowConfidence, createdAt]
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        bpm:
+          type: integer
+        timeSignature:
+          type: string
+        genre:
+          type: string
+        mood:
+          type: string
+        prompt:
+          type: string
+        harmony:
+          $ref: "#/components/schemas/HarmonyResult"
+        melodies:
+          type: array
+          items:
+            $ref: "#/components/schemas/MelodyResult"
+        drums:
+          $ref: "#/components/schemas/DrumPattern"
+        styleMatch:
+          type: number
+        lowConfidence:
+          type: boolean
+        createdAt:
+          type: string
+
+    GenerateCompositionBody:
+      type: object
+      required: [prompt, genre, mood]
+      properties:
+        prompt:
+          type: string
+          minLength: 3
+          maxLength: 500
+        genre:
+          type: string
+        mood:
+          type: string
+        bpm:
+          type: integer
+          minimum: 60
+          maximum: 200
+        key:
+          type: string
+        timeSignature:
+          type: string
+
+    RegenerateCompositionBody:
+      type: object
+      required: [compositionId]
+      properties:
+        compositionId:
+          type: string
+        keepHarmony:
+          type: boolean
+        keepMelody:
+          type: boolean
+        keepRhythm:
+          type: boolean
+
+    GenerateCompositionResponse:
+      type: object
+      required: [compositionId, composition, lowConfidence, generationMs]
+      properties:
+        compositionId:
+          type: string
+        composition:
+          $ref: "#/components/schemas/Composition"
+        lowConfidence:
+          type: boolean
+        generationMs:
+          type: integer
+
+    Project:
+      type: object
+      required: [id, name, tags, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        version:
+          type: integer
+        deletedAt:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    ProjectWithComposition:
+      type: object
+      required: [project]
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        latestComposition:
+          $ref: "#/components/schemas/Composition"
+          nullable: true
+
+    CreateProjectBody:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        tags:
+          type: array
+          items:
+            type: string
+        compositionId:
+          type: string
+
+    UpdateProjectBody:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        tags:
+          type: array
+          items:
+            type: string
+
+    DeleteProjectResponse:
+      type: object
+      required: [projectId, deletedAt]
+      properties:
+        projectId:
+          type: string
+        deletedAt:
+          type: string
+
+    SaveProjectVersionBody:
+      type: object
+      required: [compositionId]
+      properties:
+        compositionId:
+          type: string
+        label:
+          type: string
+
+    SaveProjectVersionResponse:
+      type: object
+      required: [versionId, versionNumber, savedAt]
+      properties:
+        versionId:
+          type: string
+        versionNumber:
+          type: integer
+        savedAt:
+          type: string
+
+    ProjectVersion:
+      type: object
+      required: [id, versionNumber, compositionId, createdAt]
+      properties:
+        id:
+          type: string
+        versionNumber:
+          type: integer
+        label:
+          type: string
+          nullable: true
+        compositionId:
+          type: string
+        createdAt:
+          type: string
+
+    ExportMidiBody:
+      type: object
+      required: [compositionId, exportType]
+      properties:
+        compositionId:
+          type: string
+        exportType:
+          type: string
+
+    ExportMidiResponse:
+      type: object
+      required: [exportId, exportType, fileName, midiBase64, fileSizeBytes, createdAt]
+      properties:
+        exportId:
+          type: string
+        exportType:
+          type: string
+        fileName:
+          type: string
+        midiBase64:
+          type: string
+        fileSizeBytes:
+          type: integer
+        createdAt:
+          type: string
+
+    ExportRecord:
+      type: object
+      required: [id, compositionId, exportType, fileName, fileSizeBytes, createdAt]
+      properties:
+        id:
+          type: string
+        compositionId:
+          type: string
+        exportType:
+          type: string
+        fileName:
+          type: string
+        fileSizeBytes:
+          type: integer
+        createdAt:
+          type: string
+
+    AnalyzeCompositionBody:
+      type: object
+      required: [compositionId]
+      properties:
+        compositionId:
+          type: string
+
+    Recommendation:
+      type: object
+      required: [dimension, severity, message]
+      properties:
+        dimension:
+          type: string
+        severity:
+          type: string
+        message:
+          type: string
+        action:
+          type: string
+          nullable: true
+
+    DimensionScores:
+      type: object
+      required: [melody, harmony, rhythm, structure]
+      properties:
+        melody:
+          type: integer
+        harmony:
+          type: integer
+        rhythm:
+          type: integer
+        structure:
+          type: integer
+
+    CopilotAnalysis:
+      type: object
+      required: [overallScore, dimensionScores, styleMatch, recommendations]
+      properties:
+        overallScore:
+          type: integer
+        dimensionScores:
+          $ref: "#/components/schemas/DimensionScores"
+        styleMatch:
+          type: number
+        recommendations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Recommendation"
+
+    CopilotAnalysisResponse:
+      type: object
+      required: [analysisId, analysis, analysisMs]
+      properties:
+        analysisId:
+          type: string
+        analysis:
+          $ref: "#/components/schemas/CopilotAnalysis"
+        analysisMs:
+          type: integer
+
+    GetSuggestionsBody:
+      type: object
+      required: [compositionId, question]
+      properties:
+        compositionId:
+          type: string
+        question:
+          type: string
+          minLength: 3
+          maxLength: 500
+
+    Suggestion:
+      type: object
+      required: [type, content]
+      properties:
+        type:
+          type: string
+        content:
+          type: string
+
+    GetSuggestionsResponse:
+      type: object
+      required: [suggestions]
+      properties:
+        suggestions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Suggestion"
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string

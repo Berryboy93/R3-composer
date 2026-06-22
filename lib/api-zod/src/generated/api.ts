@@ -108,3 +108,451 @@ export const ActivateComposerPatternResponse = zod.object({
 })
 
 
+/**
+ * @summary Generate a full AI composition
+ */
+export const generateCompositionBodyPromptMin = 3;
+export const generateCompositionBodyPromptMax = 500;
+
+export const generateCompositionBodyBpmMin = 60;
+export const generateCompositionBodyBpmMax = 200;
+
+
+
+export const GenerateCompositionBody = zod.object({
+  "prompt": zod.string().min(generateCompositionBodyPromptMin).max(generateCompositionBodyPromptMax),
+  "genre": zod.string(),
+  "mood": zod.string(),
+  "bpm": zod.number().min(generateCompositionBodyBpmMin).max(generateCompositionBodyBpmMax).optional(),
+  "key": zod.string().optional(),
+  "timeSignature": zod.string().optional()
+})
+
+export const GenerateCompositionResponse = zod.object({
+  "compositionId": zod.string(),
+  "composition": zod.object({
+  "id": zod.string(),
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "genre": zod.string(),
+  "mood": zod.string(),
+  "prompt": zod.string(),
+  "harmony": zod.object({
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "chords": zod.array(zod.object({
+  "position": zod.number(),
+  "symbol": zod.string(),
+  "romanNumeral": zod.string(),
+  "duration": zod.number(),
+  "midiNotes": zod.array(zod.number())
+}))
+}),
+  "melodies": zod.array(zod.object({
+  "type": zod.string(),
+  "phraseCount": zod.number(),
+  "notes": zod.array(zod.object({
+  "pitch": zod.number(),
+  "startBeat": zod.number(),
+  "duration": zod.number(),
+  "velocity": zod.number()
+}))
+})),
+  "drums": zod.object({
+  "bpm": zod.number(),
+  "bars": zod.number(),
+  "steps": zod.number(),
+  "swing": zod.number().optional(),
+  "tracks": zod.object({
+  "kick": zod.array(zod.boolean()),
+  "snare": zod.array(zod.boolean()),
+  "hihat": zod.array(zod.boolean()),
+  "openHH": zod.array(zod.boolean()).optional(),
+  "clap": zod.array(zod.boolean()).optional()
+})
+}),
+  "styleMatch": zod.number(),
+  "lowConfidence": zod.boolean(),
+  "createdAt": zod.string()
+}),
+  "lowConfidence": zod.boolean(),
+  "generationMs": zod.number()
+})
+
+
+/**
+ * @summary Regenerate a composition with optional component locks
+ */
+export const RegenerateCompositionBody = zod.object({
+  "compositionId": zod.string(),
+  "keepHarmony": zod.boolean().optional(),
+  "keepMelody": zod.boolean().optional(),
+  "keepRhythm": zod.boolean().optional()
+})
+
+export const RegenerateCompositionResponse = zod.object({
+  "compositionId": zod.string(),
+  "composition": zod.object({
+  "id": zod.string(),
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "genre": zod.string(),
+  "mood": zod.string(),
+  "prompt": zod.string(),
+  "harmony": zod.object({
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "chords": zod.array(zod.object({
+  "position": zod.number(),
+  "symbol": zod.string(),
+  "romanNumeral": zod.string(),
+  "duration": zod.number(),
+  "midiNotes": zod.array(zod.number())
+}))
+}),
+  "melodies": zod.array(zod.object({
+  "type": zod.string(),
+  "phraseCount": zod.number(),
+  "notes": zod.array(zod.object({
+  "pitch": zod.number(),
+  "startBeat": zod.number(),
+  "duration": zod.number(),
+  "velocity": zod.number()
+}))
+})),
+  "drums": zod.object({
+  "bpm": zod.number(),
+  "bars": zod.number(),
+  "steps": zod.number(),
+  "swing": zod.number().optional(),
+  "tracks": zod.object({
+  "kick": zod.array(zod.boolean()),
+  "snare": zod.array(zod.boolean()),
+  "hihat": zod.array(zod.boolean()),
+  "openHH": zod.array(zod.boolean()).optional(),
+  "clap": zod.array(zod.boolean()).optional()
+})
+}),
+  "styleMatch": zod.number(),
+  "lowConfidence": zod.boolean(),
+  "createdAt": zod.string()
+}),
+  "lowConfidence": zod.boolean(),
+  "generationMs": zod.number()
+})
+
+
+/**
+ * @summary Get a composition by ID
+ */
+export const GetCompositionParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const GetCompositionResponse = zod.object({
+  "id": zod.string(),
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "genre": zod.string(),
+  "mood": zod.string(),
+  "prompt": zod.string(),
+  "harmony": zod.object({
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "chords": zod.array(zod.object({
+  "position": zod.number(),
+  "symbol": zod.string(),
+  "romanNumeral": zod.string(),
+  "duration": zod.number(),
+  "midiNotes": zod.array(zod.number())
+}))
+}),
+  "melodies": zod.array(zod.object({
+  "type": zod.string(),
+  "phraseCount": zod.number(),
+  "notes": zod.array(zod.object({
+  "pitch": zod.number(),
+  "startBeat": zod.number(),
+  "duration": zod.number(),
+  "velocity": zod.number()
+}))
+})),
+  "drums": zod.object({
+  "bpm": zod.number(),
+  "bars": zod.number(),
+  "steps": zod.number(),
+  "swing": zod.number().optional(),
+  "tracks": zod.object({
+  "kick": zod.array(zod.boolean()),
+  "snare": zod.array(zod.boolean()),
+  "hihat": zod.array(zod.boolean()),
+  "openHH": zod.array(zod.boolean()).optional(),
+  "clap": zod.array(zod.boolean()).optional()
+})
+}),
+  "styleMatch": zod.number(),
+  "lowConfidence": zod.boolean(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary List all projects
+ */
+export const ListProjectsResponseItem = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "tags": zod.array(zod.string()),
+  "version": zod.number(),
+  "deletedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListProjectsResponse = zod.array(ListProjectsResponseItem)
+
+
+/**
+ * @summary Create a new project
+ */
+export const createProjectBodyNameMax = 100;
+
+
+
+export const CreateProjectBody = zod.object({
+  "name": zod.string().min(1).max(createProjectBodyNameMax),
+  "tags": zod.array(zod.string()).optional(),
+  "compositionId": zod.string().optional()
+})
+
+
+/**
+ * @summary Get a project with its latest composition
+ */
+export const GetProjectParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const GetProjectResponse = zod.object({
+  "project": zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "tags": zod.array(zod.string()),
+  "version": zod.number(),
+  "deletedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}),
+  "latestComposition": zod.object({
+  "id": zod.string(),
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "genre": zod.string(),
+  "mood": zod.string(),
+  "prompt": zod.string(),
+  "harmony": zod.object({
+  "key": zod.string(),
+  "bpm": zod.number(),
+  "timeSignature": zod.string(),
+  "chords": zod.array(zod.object({
+  "position": zod.number(),
+  "symbol": zod.string(),
+  "romanNumeral": zod.string(),
+  "duration": zod.number(),
+  "midiNotes": zod.array(zod.number())
+}))
+}),
+  "melodies": zod.array(zod.object({
+  "type": zod.string(),
+  "phraseCount": zod.number(),
+  "notes": zod.array(zod.object({
+  "pitch": zod.number(),
+  "startBeat": zod.number(),
+  "duration": zod.number(),
+  "velocity": zod.number()
+}))
+})),
+  "drums": zod.object({
+  "bpm": zod.number(),
+  "bars": zod.number(),
+  "steps": zod.number(),
+  "swing": zod.number().optional(),
+  "tracks": zod.object({
+  "kick": zod.array(zod.boolean()),
+  "snare": zod.array(zod.boolean()),
+  "hihat": zod.array(zod.boolean()),
+  "openHH": zod.array(zod.boolean()).optional(),
+  "clap": zod.array(zod.boolean()).optional()
+})
+}),
+  "styleMatch": zod.number(),
+  "lowConfidence": zod.boolean(),
+  "createdAt": zod.string()
+}).nullish()
+})
+
+
+/**
+ * @summary Update project metadata
+ */
+export const UpdateProjectParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const updateProjectBodyNameMax = 100;
+
+
+
+export const UpdateProjectBody = zod.object({
+  "name": zod.string().min(1).max(updateProjectBodyNameMax).optional(),
+  "tags": zod.array(zod.string()).optional()
+})
+
+export const UpdateProjectResponse = zod.object({
+  "id": zod.string(),
+  "name": zod.string(),
+  "tags": zod.array(zod.string()),
+  "version": zod.number(),
+  "deletedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Soft-delete a project
+ */
+export const DeleteProjectParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const DeleteProjectResponse = zod.object({
+  "projectId": zod.string(),
+  "deletedAt": zod.string()
+})
+
+
+/**
+ * @summary Save current composition as a version snapshot
+ */
+export const SaveProjectVersionParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const SaveProjectVersionBody = zod.object({
+  "compositionId": zod.string(),
+  "label": zod.string().optional()
+})
+
+export const SaveProjectVersionResponse = zod.object({
+  "versionId": zod.string(),
+  "versionNumber": zod.number(),
+  "savedAt": zod.string()
+})
+
+
+/**
+ * @summary List all version snapshots for a project
+ */
+export const ListProjectVersionsParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const ListProjectVersionsResponseItem = zod.object({
+  "id": zod.string(),
+  "versionNumber": zod.number(),
+  "label": zod.string().nullish(),
+  "compositionId": zod.string(),
+  "createdAt": zod.string()
+})
+export const ListProjectVersionsResponse = zod.array(ListProjectVersionsResponseItem)
+
+
+/**
+ * @summary Export composition as MIDI
+ */
+export const ExportMidiBody = zod.object({
+  "compositionId": zod.string(),
+  "exportType": zod.string()
+})
+
+export const ExportMidiResponse = zod.object({
+  "exportId": zod.string(),
+  "exportType": zod.string(),
+  "fileName": zod.string(),
+  "midiBase64": zod.string(),
+  "fileSizeBytes": zod.number(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary List recent exports
+ */
+export const ListExportsResponseItem = zod.object({
+  "id": zod.string(),
+  "compositionId": zod.string(),
+  "exportType": zod.string(),
+  "fileName": zod.string(),
+  "fileSizeBytes": zod.number(),
+  "createdAt": zod.string()
+})
+export const ListExportsResponse = zod.array(ListExportsResponseItem)
+
+
+/**
+ * @summary AI analysis of a composition
+ */
+export const AnalyzeCompositionBody = zod.object({
+  "compositionId": zod.string()
+})
+
+export const AnalyzeCompositionResponse = zod.object({
+  "analysisId": zod.string(),
+  "analysis": zod.object({
+  "overallScore": zod.number(),
+  "dimensionScores": zod.object({
+  "melody": zod.number(),
+  "harmony": zod.number(),
+  "rhythm": zod.number(),
+  "structure": zod.number()
+}),
+  "styleMatch": zod.number(),
+  "recommendations": zod.array(zod.object({
+  "dimension": zod.string(),
+  "severity": zod.string(),
+  "message": zod.string(),
+  "action": zod.string().nullish()
+}))
+}),
+  "analysisMs": zod.number()
+})
+
+
+/**
+ * @summary Get AI suggestions based on a follow-up question
+ */
+export const getSuggestionsBodyQuestionMin = 3;
+export const getSuggestionsBodyQuestionMax = 500;
+
+
+
+export const GetSuggestionsBody = zod.object({
+  "compositionId": zod.string(),
+  "question": zod.string().min(getSuggestionsBodyQuestionMin).max(getSuggestionsBodyQuestionMax)
+})
+
+export const GetSuggestionsResponse = zod.object({
+  "suggestions": zod.array(zod.object({
+  "type": zod.string(),
+  "content": zod.string()
+}))
+})
+
+

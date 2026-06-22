@@ -45,3 +45,233 @@ export interface ComposerPatternInput {
   bluePads: number[];
 }
 
+export interface Chord {
+  position: number;
+  symbol: string;
+  romanNumeral: string;
+  duration: number;
+  midiNotes: number[];
+}
+
+export interface HarmonyResult {
+  key: string;
+  bpm: number;
+  timeSignature: string;
+  chords: Chord[];
+}
+
+export interface MelodyNote {
+  pitch: number;
+  startBeat: number;
+  duration: number;
+  velocity: number;
+}
+
+export interface MelodyResult {
+  type: string;
+  phraseCount: number;
+  notes: MelodyNote[];
+}
+
+export interface DrumTracks {
+  kick: boolean[];
+  snare: boolean[];
+  hihat: boolean[];
+  openHH?: boolean[];
+  clap?: boolean[];
+}
+
+export interface DrumPattern {
+  bpm: number;
+  bars: number;
+  steps: number;
+  swing?: number;
+  tracks: DrumTracks;
+}
+
+export interface Composition {
+  id: string;
+  key: string;
+  bpm: number;
+  timeSignature: string;
+  genre: string;
+  mood: string;
+  prompt: string;
+  harmony: HarmonyResult;
+  melodies: MelodyResult[];
+  drums: DrumPattern;
+  styleMatch: number;
+  lowConfidence: boolean;
+  createdAt: string;
+}
+
+export interface GenerateCompositionBody {
+  /**
+     * @minLength 3
+     * @maxLength 500
+     */
+  prompt: string;
+  genre: string;
+  mood: string;
+  /**
+     * @minimum 60
+     * @maximum 200
+     */
+  bpm?: number;
+  key?: string;
+  timeSignature?: string;
+}
+
+export interface RegenerateCompositionBody {
+  compositionId: string;
+  keepHarmony?: boolean;
+  keepMelody?: boolean;
+  keepRhythm?: boolean;
+}
+
+export interface GenerateCompositionResponse {
+  compositionId: string;
+  composition: Composition;
+  lowConfidence: boolean;
+  generationMs: number;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  tags: string[];
+  version: number;
+  deletedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectWithComposition {
+  project: Project;
+  latestComposition?: Composition | null;
+}
+
+export interface CreateProjectBody {
+  /**
+     * @minLength 1
+     * @maxLength 100
+     */
+  name: string;
+  tags?: string[];
+  compositionId?: string;
+}
+
+export interface UpdateProjectBody {
+  /**
+     * @minLength 1
+     * @maxLength 100
+     */
+  name?: string;
+  tags?: string[];
+}
+
+export interface DeleteProjectResponse {
+  projectId: string;
+  deletedAt: string;
+}
+
+export interface SaveProjectVersionBody {
+  compositionId: string;
+  label?: string;
+}
+
+export interface SaveProjectVersionResponse {
+  versionId: string;
+  versionNumber: number;
+  savedAt: string;
+}
+
+export interface ProjectVersion {
+  id: string;
+  versionNumber: number;
+  label?: string | null;
+  compositionId: string;
+  createdAt: string;
+}
+
+export interface ExportMidiBody {
+  compositionId: string;
+  exportType: string;
+}
+
+export interface ExportMidiResponse {
+  exportId: string;
+  exportType: string;
+  fileName: string;
+  midiBase64: string;
+  fileSizeBytes: number;
+  createdAt: string;
+}
+
+export interface ExportRecord {
+  id: string;
+  compositionId: string;
+  exportType: string;
+  fileName: string;
+  fileSizeBytes: number;
+  createdAt: string;
+}
+
+export interface AnalyzeCompositionBody {
+  compositionId: string;
+}
+
+export interface Recommendation {
+  dimension: string;
+  severity: string;
+  message: string;
+  action?: string | null;
+}
+
+export interface DimensionScores {
+  melody: number;
+  harmony: number;
+  rhythm: number;
+  structure: number;
+}
+
+export interface CopilotAnalysis {
+  overallScore: number;
+  dimensionScores: DimensionScores;
+  styleMatch: number;
+  recommendations: Recommendation[];
+}
+
+export interface CopilotAnalysisResponse {
+  analysisId: string;
+  analysis: CopilotAnalysis;
+  analysisMs: number;
+}
+
+export interface GetSuggestionsBody {
+  compositionId: string;
+  /**
+     * @minLength 3
+     * @maxLength 500
+     */
+  question: string;
+}
+
+export interface Suggestion {
+  type: string;
+  content: string;
+}
+
+export interface GetSuggestionsResponse {
+  suggestions: Suggestion[];
+}
+
+export type ErrorResponseError = {
+  code: string;
+  message: string;
+};
+
+export interface ErrorResponse {
+  error: ErrorResponseError;
+}
+
