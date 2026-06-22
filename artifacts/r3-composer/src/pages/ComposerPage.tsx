@@ -81,21 +81,21 @@ interface CompositionData {
 function Knob({ offset = 0 }: { offset?: number }) {
   return (
     <div style={{
-      width: 44, height: 44, borderRadius: '50%', position: 'relative',
+      width: 36, height: 36, borderRadius: '50%', position: 'relative',
       background: 'radial-gradient(circle at 37% 33%, #393939, #101010)',
-      boxShadow: '0 5px 12px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.6)',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.6)',
       border: '1px solid rgba(255,255,255,0.07)',
       flexShrink: 0,
     }}>
       <div style={{
-        width: 2, height: 9, borderRadius: 2,
+        width: 2, height: 7, borderRadius: 2,
         background: 'linear-gradient(to bottom, #e0e0e0, #aaa)',
-        position: 'absolute', top: 4, left: '50%',
+        position: 'absolute', top: 3, left: '50%',
         transform: `translateX(-50%) rotate(${offset}deg)`,
         transformOrigin: '50% 100%',
       }} />
       <div style={{
-        width: 16, height: 16, borderRadius: '50%',
+        width: 13, height: 13, borderRadius: '50%',
         background: 'radial-gradient(circle at 40% 40%, #2a2a2a, #0e0e0e)',
         border: '1px solid rgba(255,255,255,0.06)',
         position: 'absolute', inset: 0, margin: 'auto',
@@ -107,22 +107,22 @@ function Knob({ offset = 0 }: { offset?: number }) {
 function JogWheel() {
   return (
     <div style={{
-      width: 78, height: 78, borderRadius: '50%', position: 'relative',
+      width: 62, height: 62, borderRadius: '50%', position: 'relative',
       background: 'radial-gradient(circle at 38% 35%, #2e2e30, #0a0a0c)',
       border: '2px solid rgba(255,255,255,0.09)',
-      boxShadow: '0 8px 20px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.07), inset 0 -2px 4px rgba(0,0,0,0.5)',
+      boxShadow: '0 6px 16px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.07), inset 0 -2px 4px rgba(0,0,0,0.5)',
     }}>
       {Array.from({ length: 12 }).map((_, i) => (
         <div key={i} style={{
-          position: 'absolute', width: 3, height: 6, borderRadius: 2,
+          position: 'absolute', width: 2, height: 5, borderRadius: 2,
           background: 'rgba(255,255,255,0.06)',
           top: '50%', left: '50%',
-          transformOrigin: '0 -31px',
-          transform: `rotate(${i * 30}deg) translateX(-1.5px)`,
+          transformOrigin: '0 -25px',
+          transform: `rotate(${i * 30}deg) translateX(-1px)`,
         }} />
       ))}
       <div style={{
-        width: 28, height: 28, borderRadius: '50%',
+        width: 22, height: 22, borderRadius: '50%',
         background: 'radial-gradient(circle at 40% 38%, #232325, #0d0d0f)',
         border: '1px solid rgba(255,255,255,0.08)',
         boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.6)',
@@ -240,55 +240,36 @@ function Screen({ bpm, composition }: { bpm: number; composition: CompositionDat
           </div>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: 3, height: 68, marginBottom: 5 }}>
-          {TRACKS.map((t, ti) => (
-            <div key={ti} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{
-                color: t.color, fontSize: 9, fontWeight: 700,
-                fontFamily: 'monospace', letterSpacing: 0.3,
-                textShadow: `0 0 6px ${t.color}88`,
-              }}>{t.name}</div>
-              {[0, 1].map(row => (
-                <div key={row} style={{
-                  flex: 1, background: 'rgba(255,255,255,0.03)',
-                  borderRadius: 2, overflow: 'hidden', position: 'relative',
-                  border: '1px solid rgba(255,255,255,0.04)',
-                }}>
-                  {t.clips.slice(0, row === 0 ? 3 : 2).map((w, ci) => (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', gap: 10 }}>
+          {/* Idle waveform visualization */}
+          <div style={{ display: 'flex', gap: 3, alignItems: 'center', justifyContent: 'center', height: 32 }}>
+            {TRACKS.map((t, ti) => (
+              <div key={ti} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, flex: 1 }}>
+                <div style={{ display: 'flex', gap: 1, alignItems: 'flex-end', height: 20 }}>
+                  {t.clips.map((h, ci) => (
                     <div key={ci} style={{
-                      position: 'absolute',
-                      top: 1, bottom: 1,
-                      left: ci === 0 ? 1 : `${ci * 32 + 2}%`,
-                      width: `${w * 28}%`,
+                      width: 3, borderRadius: 2,
+                      height: `${h * 20}px`,
                       background: t.color,
-                      opacity: row === 0 ? 0.85 : 0.55,
-                      borderRadius: 1,
-                      boxShadow: `0 0 4px ${t.color}66`,
+                      opacity: 0.55,
                     }} />
                   ))}
                 </div>
-              ))}
-            </div>
-          ))}
+                <span style={{ color: t.color, fontSize: 7, fontFamily: 'monospace', opacity: 0.7, letterSpacing: 0.3 }}>{t.name}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+            <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 9, letterSpacing: 1.5, fontFamily: 'monospace', whiteSpace: 'nowrap' }}>PRESS ✦ TO GENERATE</span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.06)' }} />
+          </div>
         </div>
       )}
-      <div style={{
-        borderTop: '1px solid rgba(255,255,255,0.07)',
-        paddingTop: 4,
-        display: 'flex',
-        justifyContent: 'space-between',
-        fontFamily: 'monospace',
-        fontSize: 8.5,
-        color: '#666',
-        letterSpacing: 0.2,
-      }}>
-        {['Filter /⋀', 'Freq: 22.0kHz', 'Res: 0.71', 'Drive: 32%', 'LFO Amt: 23%', 'Rate: 1/8', 'Vol: 0.0dB'].map((p, i) => (
-          <span key={i} style={{ color: i === 0 ? '#e8960e' : '#666' }}>{p}</span>
-        ))}
-      </div>
     </div>
   );
 }
+
 
 /* ─── Main Component ────────────────────────────────────────────────────────── */
 
@@ -581,14 +562,21 @@ export default function ComposerPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#242426',
+      background: 'radial-gradient(ellipse at 50% 18%, #1c1230 0%, #100e18 40%, #0a0a0d 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '24px 24px 24px 24px',
+      padding: '8px 12px 12px',
       fontFamily: "'Inter', system-ui, sans-serif",
       userSelect: 'none',
       position: 'relative',
-      overflow: 'hidden'
+      overflowY: 'auto',
     }}>
+      {/* Ambient glow */}
+      <div style={{
+        position: 'fixed', top: '10%', left: '50%', transform: 'translateX(-50%)',
+        width: 800, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(ellipse, rgba(110,30,200,0.12) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
 
       {/* ── Slide-out Patterns Panel ── */}
       <div style={{
@@ -1044,17 +1032,19 @@ export default function ComposerPage() {
 
       {/* ── Device body ── */}
       <div style={{
-        background: `linear-gradient(175deg, ${BODY_BG} 0%, #181818 100%)`,
-        borderRadius: 22,
-        border: '1px solid rgba(255,255,255,0.09)',
-        padding: '14px 14px 16px',
+        background: `linear-gradient(175deg, ${BODY_BG} 0%, #161618 100%)`,
+        borderRadius: 20,
+        border: '1px solid rgba(255,255,255,0.08)',
+        padding: '10px 12px 12px',
         width: 960,
         position: 'relative',
+        zIndex: 1,
         boxShadow: [
-          'inset 0 1px 0 rgba(255,255,255,0.07)',
-          'inset 0 -1px 0 rgba(0,0,0,0.6)',
-          '0 24px 60px rgba(0,0,0,0.8)',
-          '0 2px 4px rgba(0,0,0,0.5)',
+          'inset 0 1px 0 rgba(255,255,255,0.06)',
+          'inset 0 -1px 0 rgba(0,0,0,0.7)',
+          '0 0 0 1px rgba(0,0,0,0.6)',
+          '0 30px 80px rgba(0,0,0,0.9)',
+          '0 0 60px rgba(100,20,180,0.15)',
         ].join(', '),
         opacity: isSessionLoading ? 0.4 : 1,
         transition: 'opacity 0.3s ease',
@@ -1071,16 +1061,46 @@ export default function ComposerPage() {
           </div>
         )}
 
-        {/* ── TOP ENCODER ROW ── */}
+        {/* ── BRAND STRIP ── */}
         <div style={{
-          display: 'flex', justifyContent: 'center', gap: 50,
-          paddingBottom: 12, marginBottom: 12,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          paddingBottom: 10, marginBottom: 10,
           borderBottom: '1px solid rgba(255,255,255,0.05)',
         }}>
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Knob key={i} offset={-20 + i * 8} />
-          ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 22, height: 22, borderRadius: 6,
+              background: 'linear-gradient(135deg, #9922dd 0%, #cc3cff 100%)',
+              boxShadow: '0 0 12px rgba(162,34,255,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 9, fontWeight: 900, color: '#fff', letterSpacing: -0.5,
+            }}>R3</div>
+            <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 10, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase' }}>Intelligent Composer</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#28b83a', boxShadow: '0 0 6px #28b83a' }} />
+            <span style={{ color: '#555', fontSize: 9, letterSpacing: 1 }}>VCM-8</span>
+          </div>
         </div>
+
+        {/* ── TOP ENCODER ROW ── */}
+        {(() => {
+          const knobLabels = ['VOLUME', 'PAN', 'SEND A', 'SEND B', 'FREQ', 'RES', 'DRIVE', 'MASTER'];
+          return (
+            <div style={{
+              display: 'flex', justifyContent: 'center', gap: 34,
+              paddingBottom: 8, marginBottom: 8,
+              borderBottom: '1px solid rgba(255,255,255,0.05)',
+            }}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                  <Knob offset={-20 + i * 8} />
+                  <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 7, letterSpacing: 0.6, fontWeight: 500 }}>{knobLabels[i]}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* ── CONTROL ROW ── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
@@ -1110,25 +1130,36 @@ export default function ComposerPage() {
 
           {/* right controls */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: 156, flexShrink: 0, alignItems: 'flex-end' }}>
-            <div style={{ display: 'flex', gap: 5 }}>
-              {/* AI Generate */}
-              <SmallBtn style={{ padding: '4px 6px' }} active={activePanel === 'ai'} onClick={() => togglePanel('ai')}>
-                <Sparkles size={13} />
-              </SmallBtn>
-              {/* Analyze / Copilot */}
-              <SmallBtn style={{ padding: '4px 6px' }} active={activePanel === 'copilot'} onClick={() => togglePanel('copilot')}>
-                <MessageSquare size={13} />
-              </SmallBtn>
-              {/* Projects */}
-              <SmallBtn style={{ padding: '4px 6px' }} active={activePanel === 'projects'} onClick={() => togglePanel('projects')}>
-                <FolderOpen size={13} />
-              </SmallBtn>
-              {/* Monitor */}
-              <SmallBtn style={{ padding: '4px 6px' }}><Monitor size={13} /></SmallBtn>
+            {/* AI tool buttons — labeled */}
+            <div style={{ display: 'flex', gap: 4 }}>
+              {[
+                { key: 'ai' as const,       icon: <Sparkles size={11} />,      label: 'GEN',     tip: 'Generate' },
+                { key: 'copilot' as const,  icon: <MessageSquare size={11} />, label: 'AI',      tip: 'Copilot'  },
+                { key: 'projects' as const, icon: <FolderOpen size={11} />,    label: 'PROJ',    tip: 'Projects' },
+              ].map(({ key, icon, label }) => (
+                <button key={key} onClick={() => togglePanel(key)} style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+                  padding: '5px 7px',
+                  background: activePanel === key
+                    ? 'linear-gradient(135deg, rgba(162,34,255,0.3), rgba(100,20,200,0.2))'
+                    : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${activePanel === key ? 'rgba(162,34,255,0.5)' : 'rgba(255,255,255,0.09)'}`,
+                  borderRadius: 6, cursor: 'pointer',
+                  color: activePanel === key ? '#cc6eff' : '#777',
+                  boxShadow: activePanel === key ? '0 0 10px rgba(162,34,255,0.3), inset 0 1px 0 rgba(255,255,255,0.08)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                  transition: 'all 0.15s',
+                }}>
+                  {icon}
+                  <span style={{ fontSize: 7, fontWeight: 700, letterSpacing: 0.5 }}>{label}</span>
+                </button>
+              ))}
+              <SmallBtn style={{ padding: '4px 6px' }}><Monitor size={11} /></SmallBtn>
             </div>
-            <div style={{ display: 'flex', gap: 5 }}>
-              <SmallBtn onClick={() => setBpm(b => b + 1)} style={{ padding: '4px 14px' }}><Plus size={13} /></SmallBtn>
-              <SmallBtn onClick={() => setBpm(b => Math.max(30, b - 1))} style={{ padding: '4px 14px' }}><Minus size={13} /></SmallBtn>
+            <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+              <span style={{ color: '#444', fontSize: 9, fontFamily: 'monospace' }}>BPM</span>
+              <SmallBtn onClick={() => setBpm(b => Math.max(30, b - 1))} style={{ padding: '3px 8px' }}><Minus size={11} /></SmallBtn>
+              <span style={{ color: '#e8960e', fontSize: 11, fontFamily: 'monospace', fontWeight: 700, minWidth: 26, textAlign: 'center' }}>{bpm}</span>
+              <SmallBtn onClick={() => setBpm(b => b + 1)} style={{ padding: '3px 8px' }}><Plus size={11} /></SmallBtn>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
               <JogWheel />
@@ -1205,12 +1236,17 @@ export default function ComposerPage() {
             flex: 1,
             display: 'grid',
             gridTemplateColumns: 'repeat(8, 1fr)',
-            gap: 7,
-            padding: 12,
-            background: '#0e0e0e',
-            borderRadius: 10,
-            border: '1px solid rgba(255,255,255,0.06)',
-            boxShadow: 'inset 0 0 30px rgba(0,0,0,0.7)',
+            gap: 5,
+            padding: 8,
+            gridAutoRows: '46px',
+            background: 'linear-gradient(160deg, #0c0c10 0%, #080808 100%)',
+            borderRadius: 12,
+            border: '1px solid rgba(255,255,255,0.05)',
+            boxShadow: [
+              'inset 0 0 40px rgba(0,0,0,0.8)',
+              'inset 0 1px 0 rgba(255,255,255,0.03)',
+              '0 0 0 1px rgba(0,0,0,0.5)',
+            ].join(', '),
             margin: '0 6px',
             position: 'relative',
           }}>
@@ -1238,7 +1274,7 @@ export default function ComposerPage() {
               const isPurple = activePads.has(i);
               const isBlue   = bluePads.has(i);
               const base: React.CSSProperties = {
-                borderRadius: 9, aspectRatio: '1', cursor: 'pointer',
+                borderRadius: 8, aspectRatio: '4/3', cursor: 'pointer',
                 transition: 'transform 0.04s, box-shadow 0.04s', position: 'relative',
               };
               let style: React.CSSProperties;
@@ -1259,9 +1295,9 @@ export default function ComposerPage() {
               } else {
                 style = {
                   ...base,
-                  background: 'linear-gradient(145deg, #d4d4de 0%, #b8b8c8 50%, #a8a8bc 100%)',
-                  border: '1px solid rgba(255,255,255,0.22)',
-                  boxShadow: ['0 4px 8px rgba(0,0,0,0.65)', 'inset 0 1px 0 rgba(255,255,255,0.5)', 'inset 0 -3px 5px rgba(0,0,0,0.25)', '0 0 6px rgba(180,180,210,0.1)'].join(', '),
+                  background: 'linear-gradient(145deg, #2a2a32 0%, #1c1c22 55%, #16161c 100%)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                  boxShadow: ['0 4px 10px rgba(0,0,0,0.9)', 'inset 0 1px 0 rgba(255,255,255,0.07)', 'inset 0 -3px 6px rgba(0,0,0,0.6)', 'inset 0 0 0 1px rgba(0,0,0,0.3)'].join(', '),
                 };
               }
               return (
